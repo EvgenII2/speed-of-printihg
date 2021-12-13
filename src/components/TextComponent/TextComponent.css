@@ -1,1 +1,10 @@
-.TextComponent{}
+.TextComponent {
+}
+
+.TextComponent__printed-text {
+  color: red;
+}
+
+.TextComponent__current-symbol {
+  background-color: green;
+}
