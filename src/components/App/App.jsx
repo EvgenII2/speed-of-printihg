@@ -17,7 +17,7 @@ function App() {
   const getText = () => {
     textApi.getText()
       .then((res) => {
-        setTextToPrint(res.toString());
+        setTextToPrint(res.toString().replace(/\s+/g, ' '));
       })
       .catch((err) => {
         console.log(`Error: ${err}`);
@@ -60,12 +60,31 @@ function App() {
           Test speed of printing
         </p>
       </header>
-      <TextComponent textToPrint={textToPrint} />
+      <TextComponent
+        printedText={printedText}
+        textToPrint={textToPrint}
+      />
       <div>
-        <InfoComponent title='Time' value={time} unit='sec.' />
-        <InfoComponent title='Speed' value={speed} unit='sym/min' />
-        <InfoComponent title='You entered' value={numberOfSymbols} unit='symbols' />
-        <InfoComponent title='Accuracy' value={accuracy} unit='%' />
+        <InfoComponent
+          title='Time'
+          value={time}
+          unit='sec.'
+        />
+        <InfoComponent
+          title='Speed'
+          value={speed}
+          unit='sym/min'
+        />
+        <InfoComponent
+          title='You entered'
+          value={numberOfSymbols}
+          unit='symbols'
+        />
+        <InfoComponent
+          title='Accuracy'
+          value={accuracy}
+          unit='%'
+        />
       </div>
       <button onClick={getText}>
         New text
