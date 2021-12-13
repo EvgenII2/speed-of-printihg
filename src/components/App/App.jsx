@@ -12,6 +12,7 @@ function App() {
   const [time, setTime] = React.useState(0);
   const [speed, setSpeed] = React.useState(0);
   const [numberOfSymbols, setNumberOfSymbols] = React.useState(0);
+  const [numberOfUncorrectSymbols, setNumberOfUncorrectSymbols] = React.useState(0);
   const [accuracy, setAccuracy] = React.useState(100);
 
   const getText = () => {
@@ -24,34 +25,59 @@ function App() {
       });
   };
 
+
+
+  const changeTime = React.useCallback((ev) => {
+    setTime(time + 1);
+  }, [time]);
+
   const pressKeyHandler = React.useCallback((ev) => {
-    const currentKey = ev.key;
-    if (currentKey === currentSymbol) {
-      setPrintedText(printedText + currentKey);
-      setTextToPrint(textToPrint?.substring(1));
+    const keyCodes = [8, 9, 13, 16, 17, 18, 19, 20, 27, 33, 34, 35, 36, 37, 38, 39, 40, 45, 46, 91, 92, 93, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 144, 145];
+    console.log((ev.keyCode))
+    if (!keyCodes.includes(ev.keyCode)) {
+      const currentKey = ev.key;
+      if (currentKey === currentSymbol) {
+        setPrintedText(printedText + currentKey);
+        setTextToPrint(textToPrint?.substring(1));
+        setNumberOfSymbols(numberOfSymbols + 1);
+      } else {
+        setNumberOfUncorrectSymbols(numberOfUncorrectSymbols + 1)
+      }
     }
-  }, [currentSymbol, textToPrint, printedText]);
+  }, [currentSymbol, textToPrint, printedText, numberOfUncorrectSymbols, numberOfSymbols]);
 
   React.useEffect(() => {
     document.addEventListener('keydown', pressKeyHandler);
     return () => {
       document.removeEventListener('keydown', pressKeyHandler);
     }
-  }, [pressKeyHandler])
+  }, [pressKeyHandler]);
 
-  useEffect(() => {
+  React.useEffect(() => {
+    let timer = setTimeout(() => { changeTime() }, 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [changeTime]
+  );
+
+  React.useEffect(() => {
     getText();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
+    setSpeed(numberOfSymbols / time * 60);
+  }, [numberOfSymbols, time]);
+
+  React.useEffect(() => {
     if (textToPrint !== undefined)
       setCurrentSymbol(textToPrint.charAt(0));
 
   }, [textToPrint]);
 
-  useEffect(() => {
-    console.log(currentSymbol, 'currentSymbol');
-  }, [currentSymbol]);
+  React.useEffect(() => {
+    setAccuracy(100 - numberOfUncorrectSymbols / numberOfSymbols);
+  }, [numberOfSymbols, numberOfUncorrectSymbols]);
 
   return (
     <div className="App">
