@@ -6,7 +6,9 @@ import './App.css';
 
 function App() {
 
-  const [text, setText] = React.useState('');
+  const [textToPrint, setTextToPrint] = React.useState('');
+  const [currentSymbol, setCurrentSymbol] = React.useState('');
+  const [printedText, setPrintedText] = React.useState('');
   const [time, setTime] = React.useState(0);
   const [speed, setSpeed] = React.useState(0);
   const [numberOfSymbols, setNumberOfSymbols] = React.useState(0);
@@ -15,16 +17,41 @@ function App() {
   const getText = () => {
     textApi.getText()
       .then((res) => {
-        setText(res);
+        setTextToPrint(res.toString());
       })
       .catch((err) => {
         console.log(`Error: ${err}`);
       });
-  }
+  };
+
+  const pressKeyHandler = React.useCallback((ev) => {
+    const currentKey = ev.key;
+    if (currentKey === currentSymbol) {
+      setPrintedText(printedText + currentKey);
+      setTextToPrint(textToPrint?.substring(1));
+    }
+  }, [currentSymbol, textToPrint, printedText]);
+
+  React.useEffect(() => {
+    document.addEventListener('keydown', pressKeyHandler);
+    return () => {
+      document.removeEventListener('keydown', pressKeyHandler);
+    }
+  }, [pressKeyHandler])
 
   useEffect(() => {
     getText();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (textToPrint !== undefined)
+      setCurrentSymbol(textToPrint.charAt(0));
+
+  }, [textToPrint]);
+
+  useEffect(() => {
+    console.log(currentSymbol, 'currentSymbol');
+  }, [currentSymbol]);
 
   return (
     <div className="App">
@@ -33,7 +60,7 @@ function App() {
           Test speed of printing
         </p>
       </header>
-      <TextComponent text={text} />
+      <TextComponent textToPrint={textToPrint} />
       <div>
         <InfoComponent title='Time' value={time} unit='sec.' />
         <InfoComponent title='Speed' value={speed} unit='sym/min' />
