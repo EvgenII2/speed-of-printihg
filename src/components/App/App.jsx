@@ -1,24 +1,25 @@
-import React, { useEffect } from 'react';
-import textApi from '../../utils/TextApi';
-import InfoComponent from '../InfoComponent/InfoComponent';
-import TextComponent from '../TextComponent/TextComponent';
-import './App.css';
+import React from "react";
+import textApi from "../../utils/TextApi";
+import InfoComponent from "../InfoComponent/InfoComponent";
+import TextComponent from "../TextComponent/TextComponent";
+import "./App.css";
 
 function App() {
 
-  const [textToPrint, setTextToPrint] = React.useState('');
-  const [currentSymbol, setCurrentSymbol] = React.useState('');
-  const [printedText, setPrintedText] = React.useState('');
+  const [textToPrint, setTextToPrint] = React.useState("");
+  const [currentSymbol, setCurrentSymbol] = React.useState("");
+  const [printedText, setPrintedText] = React.useState("");
   const [time, setTime] = React.useState(0);
   const [speed, setSpeed] = React.useState(0);
   const [numberOfSymbols, setNumberOfSymbols] = React.useState(0);
   const [numberOfUncorrectSymbols, setNumberOfUncorrectSymbols] = React.useState(0);
   const [accuracy, setAccuracy] = React.useState(100);
+  const [isSatrt, setIsStart] = React.useState(false);
 
   const getText = () => {
     textApi.getText()
       .then((res) => {
-        setTextToPrint(res.toString().replace(/\s+/g, ' '));
+        setTextToPrint(res.toString().replace(/\s+/g, " "));
       })
       .catch((err) => {
         console.log(`Error: ${err}`);
@@ -47,9 +48,9 @@ function App() {
   }, [currentSymbol, textToPrint, printedText, numberOfUncorrectSymbols, numberOfSymbols]);
 
   React.useEffect(() => {
-    document.addEventListener('keydown', pressKeyHandler);
+    document.addEventListener("keydown", pressKeyHandler);
     return () => {
-      document.removeEventListener('keydown', pressKeyHandler);
+      document.removeEventListener("keydown", pressKeyHandler);
     }
   }, [pressKeyHandler]);
 
@@ -92,24 +93,24 @@ function App() {
       />
       <div>
         <InfoComponent
-          title='Time'
+          title="Time"
           value={time}
-          unit='sec.'
+          unit="sec."
         />
         <InfoComponent
-          title='Speed'
+          title="Speed"
           value={speed}
-          unit='sym/min'
+          unit="sym/min"
         />
         <InfoComponent
-          title='You entered'
+          title="You entered"
           value={numberOfSymbols}
-          unit='symbols'
+          unit="symbols"
         />
         <InfoComponent
-          title='Accuracy'
+          title="Accuracy"
           value={accuracy}
-          unit='%'
+          unit="%"
         />
       </div>
       <button onClick={getText}>

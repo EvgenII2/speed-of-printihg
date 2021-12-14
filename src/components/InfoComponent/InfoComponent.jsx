@@ -1,4 +1,4 @@
-import './InfoComponent.css';
+import "./InfoComponent.css";
 
 function InfoComponent({ title, value, unit }) {
     return (

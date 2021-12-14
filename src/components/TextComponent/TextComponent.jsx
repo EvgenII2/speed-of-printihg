@@ -1,4 +1,4 @@
-import './TextComponent.css';
+import "./TextComponent.css";
 
 function TextComponent({ printedText, textToPrint }) {
     return (
