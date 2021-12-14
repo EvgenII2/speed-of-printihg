@@ -1,6 +1,7 @@
 import React from "react";
 import textApi from "../../utils/TextApi";
 import InfoComponent from "../InfoComponent/InfoComponent";
+import StartPopup from "../StartPopup/StartPopup";
 import TextComponent from "../TextComponent/TextComponent";
 import "./App.css";
 
@@ -14,7 +15,7 @@ function App() {
   const [numberOfSymbols, setNumberOfSymbols] = React.useState(0);
   const [numberOfUncorrectSymbols, setNumberOfUncorrectSymbols] = React.useState(0);
   const [accuracy, setAccuracy] = React.useState(100);
-  const [isSatrt, setIsStart] = React.useState(false);
+  const [isStart, setIsStart] = React.useState(true);
 
   const getText = () => {
     textApi.getText()
@@ -26,9 +27,7 @@ function App() {
       });
   };
 
-
-
-  const changeTime = React.useCallback((ev) => {
+  const changeTime = React.useCallback(() => {
     setTime(time + 1);
   }, [time]);
 
@@ -55,33 +54,36 @@ function App() {
   }, [pressKeyHandler]);
 
   React.useEffect(() => {
-    let timer = setTimeout(() => { changeTime() }, 1000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [changeTime]
-  );
+    if (!isStart) {
+      let timer = setTimeout(() => { changeTime() }, 1000);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [changeTime, isStart]);
 
   React.useEffect(() => {
     getText();
   }, []);
 
   React.useEffect(() => {
-    setSpeed(numberOfSymbols / time * 60);
-  }, [numberOfSymbols, time]);
+    if (!isStart) {
+      setSpeed(numberOfSymbols / time * 60);
+    }
+  }, [numberOfSymbols, time, isStart]);
 
   React.useEffect(() => {
     if (textToPrint !== undefined)
       setCurrentSymbol(textToPrint.charAt(0));
-
   }, [textToPrint]);
 
   React.useEffect(() => {
-    setAccuracy(100 - numberOfUncorrectSymbols / numberOfSymbols);
+    setAccuracy(100 - numberOfUncorrectSymbols / (numberOfSymbols + numberOfUncorrectSymbols) * 100);
   }, [numberOfSymbols, numberOfUncorrectSymbols]);
 
   return (
     <div className="App">
+      <StartPopup isOpen={isStart} onClose={setIsStart} />
       <header className="App-header">
         <p>
           Test speed of printing

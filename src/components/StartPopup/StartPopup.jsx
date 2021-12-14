@@ -1,6 +1,11 @@
 import "./StartPopup";
 
 function StartPopup({ isOpen, onClose }) {
+
+    const onClick = () => {
+        onClose(false);
+    }
+
     return isOpen ? (
         <div className={"StartPopup StartPopup_visible"}>
             <div className="StartPopup__container">
@@ -11,7 +16,7 @@ function StartPopup({ isOpen, onClose }) {
                     aria-label="закрыть"
                     type="button"
                     className="StartPopup__button-start"
-                    onClick={onClose}
+                    onClick={onClick}
                 >
                     Start
                 </button>
