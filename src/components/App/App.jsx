@@ -1,7 +1,7 @@
 import "./App.css";
 
 import React from "react";
-import StartPopup from "../StartPopup/StartPopup";
+import Popup from "../Popup/Popup";
 import InfoComponent from "../InfoComponent/InfoComponent";
 import TextComponent from "../TextComponent/TextComponent";
 
@@ -11,9 +11,10 @@ import { SERVICE_KEY_CODES } from "../../utils/ServiceKeyCodes";
 function App() {
     const [time, setTime] = React.useState(0);
     const [speed, setSpeed] = React.useState(0);
+    const [textLength, setTextLength] = React.useState(0);
     const [isStart, setIsStart] = React.useState(true);
     const [accuracy, setAccuracy] = React.useState(100);
-    // const [isFinish, setIsFinish] = React.useState(true);
+    const [isFinish, setIsFinish] = React.useState(false);
     const [printedText, setPrintedText] = React.useState("");
     const [textToPrint, setTextToPrint] = React.useState("");
     const [isUncorrect, setIsUncorrect] = React.useState(false);
@@ -22,13 +23,14 @@ function App() {
     const [numberOfUncorrectSymbols, setNumberOfUncorrectSymbols] = React.useState(0);
 
     const getText = () => {
-        textApi.getText()
-            .then((res) => {
-                setTextToPrint(res.toString().replace(/\s+/g, " "));
-            })
-            .catch((err) => {
-                console.log(`Error: ${err}`);
-            });
+        setTextToPrint("fff.");
+        // textApi.getText()
+        //     .then((res) => {
+        //         setTextToPrint(res.toString().replace(/\s+/g, " "));
+        //     })
+        //     .catch((err) => {
+        //         console.log(`Error: ${err}`);
+        //     });
     };
 
     const changeTime = React.useCallback(() => {
@@ -40,6 +42,7 @@ function App() {
         setTime(0);
         setPrintedText("");
         setSpeed(0);
+        setTextLength(0);
         setNumberOfSymbols(0);
         setNumberOfUncorrectSymbols(0);
         setAccuracy(100);
@@ -86,22 +89,43 @@ function App() {
         if (!isStart) {
             setSpeed(numberOfSymbols / time * 60);
         }
-    }, [numberOfSymbols, time, isStart]);
+        if (numberOfSymbols !== 0 && numberOfSymbols === textLength) {
+            setIsFinish(true);
+            setIsStart(false);
+        }
+
+    }, [numberOfSymbols, time, isStart, textLength]);
 
     React.useEffect(() => {
-        if (textToPrint !== undefined)
+        if (textToPrint !== undefined) {
             setCurrentSymbol(textToPrint.charAt(0));
+            setTextLength(textToPrint.length);
+        }
     }, [textToPrint]);
 
     React.useEffect(() => {
         setAccuracy(100 - numberOfUncorrectSymbols / (numberOfSymbols + numberOfUncorrectSymbols) * 100);
     }, [numberOfSymbols, numberOfUncorrectSymbols]);
 
+    const closeStartPopup = () => {
+        setIsStart(false);
+    }
+
+    const closeFinishPopup = () => {
+        setIsFinish(true);
+    }
+
     return (
         <div className={isUncorrect ? "App App__error" : "App"}>
-            <StartPopup
+            <Popup
                 isOpen={isStart}
-                onClose={setIsStart}
+                message='Are you ready?'
+                onClose={closeStartPopup}
+            />
+            <Popup
+                isOpen={isFinish}
+                message={`You entered ${numberOfSymbols} symbols to ${time} sec. Your speed is ${speed} sym/min. Your accuracy is ${accuracy}%.`}
+                onClose={closeFinishPopup}
             />
             <header className="App-header">
                 <p>
