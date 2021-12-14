@@ -1,9 +1,9 @@
-import './InfoComponent.css';
+import "./InfoComponent.css";
 
 function InfoComponent({ title, value, unit }) {
     return (
         <p className="TextComponent">
-            {`${title}: ${value}, ${unit}`}
+            {`${title}: ${value ? value : ' - '} ${unit}`}
         </p>
     );
 }
