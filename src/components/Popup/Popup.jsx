@@ -1,8 +1,8 @@
-import "./Popup";
+import "./Popup.css";
 
-function Popup({ isOpen, message, onClose }) {
+function Popup({ isOpen, message, onClick, buttonTitle = "Ok" }) {
     return isOpen ? (
-        <div className={"Popup Popup_visible"}>
+        <div className={"Popup"}>
             <div className="Popup__container">
                 <h2 className="Popup__title">
                     {message}
@@ -10,15 +10,15 @@ function Popup({ isOpen, message, onClose }) {
                 <button
                     aria-label="закрыть"
                     type="button"
-                    className="Popup__button-start"
-                    onClick={onClose}
+                    className="Popup__button"
+                    onClick={onClick}
                 >
-                    Start
+                    {buttonTitle}
                 </button>
             </div>
         </div>
     ) : (
-        <div className={"Popup"} />
+        <div className={"Popup_unvisible"} />
     );
 }
 

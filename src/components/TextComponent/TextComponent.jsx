@@ -2,7 +2,7 @@ import "./TextComponent.css";
 
 function TextComponent({ printedText, textToPrint }) {
     return (
-        <p className="TextComponent">
+        <article className="TextComponent">
             <span className="TextComponent__printed-text">
                 {printedText}
             </span>
@@ -12,7 +12,7 @@ function TextComponent({ printedText, textToPrint }) {
             <span className="TextComponent__text-to-print">
                 {textToPrint.substr(1)}
             </span>
-        </p>
+        </article>
     );
 }
 
