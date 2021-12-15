@@ -1,0 +1,12 @@
+.TextComponent {
+  width: 75%;
+  white-space: break-spaces;
+}
+
+.TextComponent__printed-text {
+  color: blue;
+}
+
+.TextComponent__current-symbol {
+  background-color: green;
+}
