@@ -1,6 +1,6 @@
 import "./Popup";
 
-function Popup({ isOpen, message, onClose }) {
+function Popup({ isOpen, message, onClose, buttonTitle = "Ok" }) {
     return isOpen ? (
         <div className={"Popup Popup_visible"}>
             <div className="Popup__container">
@@ -13,7 +13,7 @@ function Popup({ isOpen, message, onClose }) {
                     className="Popup__button-start"
                     onClick={onClose}
                 >
-                    Start
+                    {buttonTitle}
                 </button>
             </div>
         </div>

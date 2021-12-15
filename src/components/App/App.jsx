@@ -129,8 +129,9 @@ function App() {
         <div className={isUncorrect ? "App App__error" : "App"}>
             <Popup
                 isOpen={isStart}
-                message='Are you ready?'
+                message="Are you ready?"
                 onClose={closeStartPopup}
+                buttonTitle="Start"
             />
             <Popup
                 isOpen={isFinish}
