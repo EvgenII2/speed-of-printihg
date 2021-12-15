@@ -88,21 +88,23 @@ function App() {
     ]);
 
     React.useEffect(() => {
+        document.addEventListener("keydown", onPressKeyHandler);
+        return () => {
+            document.removeEventListener("keydown", onPressKeyHandler);
+        }
+    }, [onPressKeyHandler]);
+
+    React.useEffect(() => {
         let interval = null;
         if (isTimerActive) {
-            document.addEventListener("keydown", onPressKeyHandler);
             interval = setInterval(() => {
                 setTime(time => time + 1);
             }, 1000);
-        } else if (isTimerActive && time !== 0) {
-            clearInterval(interval);
-            document.removeEventListener("keydown", onPressKeyHandler);
         }
         return () => {
             clearInterval(interval);
-            document.removeEventListener("keydown", onPressKeyHandler);
         }
-    }, [isTimerActive, time, onPressKeyHandler]);
+    }, [isTimerActive, time]);
 
     React.useEffect(() => {
         getText();
@@ -182,7 +184,7 @@ function App() {
                 className="App__button"
                 onClick={onClickHandler}
             >
-                New text
+                Another text
             </button>
         </div>
     );
