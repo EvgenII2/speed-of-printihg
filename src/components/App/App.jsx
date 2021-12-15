@@ -25,14 +25,11 @@ function App() {
     const [numberOfUncorrectSymbols, setNumberOfUncorrectSymbols] = React.useState(0);
 
     const getText = () => {
-        // const test = "ffff";
-        // setTextToPrint(test);
-        // setTextLength(test.length - 1);
         textApi.getText()
             .then((res) => {
                 const resString = res.toString().replace(/\s+/g, " ");
                 setTextToPrint(resString);
-                setTextLength(resString.length - 1)
+                setTextLength(resString.length - 1);
             })
             .catch((err) => {
                 console.log(`Error: ${err}`);
@@ -41,16 +38,19 @@ function App() {
 
     const changeStatesToStartValues = () => {
         setTime(0);
-        setPrintedText("");
         setSpeed(0);
-        setTextLength(0);
-        setNumberOfSymbols(0);
-        setNumberOfUncorrectSymbols(0);
         setAccuracy(0);
         setIsStart(true);
         setIsFinish(false);
+        setTextLength(0);
+        setFinishTime(0);
+        setPrintedText("");
+        setTextToPrint("");
         setIsUncorrect(false);
         setIsTimerActive(false);
+        setCurrentSymbol("");
+        setNumberOfSymbols(0);
+        setNumberOfUncorrectSymbols(0);
     }
 
     const onClickHandler = () => {
@@ -150,7 +150,7 @@ function App() {
                 onClick={closeFinishPopup}
             />
             <h1 className="App__header">
-                Test speed of printing
+                Speed of printing
             </h1>
             <div className="App__main">
                 <TextComponent
