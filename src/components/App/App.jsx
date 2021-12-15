@@ -25,8 +25,9 @@ function App() {
     const [numberOfUncorrectSymbols, setNumberOfUncorrectSymbols] = React.useState(0);
 
     const getText = () => {
-        // setTextToPrint("fff");
-        // setTextLength("fff".length - 1);
+        // const test = "ffff";
+        // setTextToPrint(test);
+        // setTextLength(test.length - 1);
         textApi.getText()
             .then((res) => {
                 const resString = res.toString().replace(/\s+/g, " ");
@@ -58,7 +59,6 @@ function App() {
     };
 
     const onPressKeyHandler = React.useCallback((ev) => {
-        console.log(numberOfSymbols, textLength)
         if (!SERVICE_KEY_CODES.includes(ev.keyCode)) {
             const currentKey = ev.key;
             if (currentKey === currentSymbol && !isStart) {
@@ -76,7 +76,16 @@ function App() {
                 setIsUncorrect(true);
             }
         }
-    }, [time, currentSymbol, textToPrint, printedText, numberOfUncorrectSymbols, numberOfSymbols, isStart, textLength]);
+    }, [
+        time,
+        currentSymbol,
+        textToPrint,
+        printedText,
+        numberOfUncorrectSymbols,
+        numberOfSymbols,
+        isStart,
+        textLength
+    ]);
 
     React.useEffect(() => {
         let interval = null;
@@ -101,7 +110,7 @@ function App() {
 
     React.useEffect(() => {
         if (!isStart) {
-            setSpeed(numberOfSymbols / time * 60);
+            setSpeed((numberOfSymbols / time * 60).toFixed(2));
         }
     }, [numberOfSymbols, isStart, time]);
 
@@ -112,7 +121,7 @@ function App() {
     }, [textToPrint]);
 
     React.useEffect(() => {
-        setAccuracy(100 - numberOfUncorrectSymbols / (numberOfSymbols + numberOfUncorrectSymbols) * 100);
+        setAccuracy((100 - numberOfUncorrectSymbols / (numberOfSymbols + numberOfUncorrectSymbols) * 100).toFixed(2));
     }, [numberOfSymbols, numberOfUncorrectSymbols]);
 
     const closeStartPopup = () => {
@@ -130,46 +139,49 @@ function App() {
             <Popup
                 isOpen={isStart}
                 message="Are you ready?"
-                onClose={closeStartPopup}
+                onClick={closeStartPopup}
                 buttonTitle="Start"
             />
             <Popup
                 isOpen={isFinish}
                 message={`You entered ${numberOfSymbols} symbols to ${finishTime} sec. Your speed is ${speed} sym/min. Your accuracy is ${accuracy}%.`}
-                onClose={closeFinishPopup}
+                onClick={closeFinishPopup}
             />
-            <header className="App-header">
-                <p>
-                    Test speed of printing
-                </p>
-            </header>
-            <TextComponent
-                printedText={printedText}
-                textToPrint={textToPrint}
-            />
-            <div>
-                <InfoComponent
-                    title="Time"
-                    value={time}
-                    unit="sec."
+            <h1 className="App__header">
+                Test speed of printing
+            </h1>
+            <div className="App__main">
+                <TextComponent
+                    printedText={printedText}
+                    textToPrint={textToPrint}
                 />
-                <InfoComponent
-                    title="Speed"
-                    value={speed}
-                    unit="sym/min"
-                />
-                <InfoComponent
-                    title="You entered"
-                    value={numberOfSymbols}
-                    unit="symbols"
-                />
-                <InfoComponent
-                    title="Accuracy"
-                    value={accuracy}
-                    unit="%"
-                />
+                <div className="App__info-column">
+                    <InfoComponent
+                        title="Time"
+                        value={time}
+                        unit="sec."
+                    />
+                    <InfoComponent
+                        title="Speed"
+                        value={speed}
+                        unit="sym/min"
+                    />
+                    <InfoComponent
+                        title="You entered"
+                        value={numberOfSymbols}
+                        unit="symbols"
+                    />
+                    <InfoComponent
+                        title="Accuracy"
+                        value={accuracy}
+                        unit="%"
+                    />
+                </div>
             </div>
-            <button onClick={onClickHandler}>
+            <button
+                className="App__button"
+                onClick={onClickHandler}
+            >
                 New text
             </button>
         </div>

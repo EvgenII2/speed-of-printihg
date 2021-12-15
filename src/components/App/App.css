@@ -1,7 +1,52 @@
 .App {
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+  margin-top: 30px;
+  background-color: rgb(236, 230, 230);
+  width: 75%;
+  padding: 30px 10px;
+  border-radius: 10px ;
 }
 
 .App__error {
   background-color: red;
+}
+
+.App__header {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.App__main{
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  font-size: 20px;
+}
+
+.App__info-column{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.App__button {
+  min-width: 100px;
+  background-color: rgb(151, 147, 147);
+  padding: 5px 10px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.App__button:hover{
+    background-color: white
 }
