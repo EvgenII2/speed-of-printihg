@@ -11,46 +11,54 @@ import { SERVICE_KEY_CODES } from "../../utils/ServiceKeyCodes";
 function App() {
     const [time, setTime] = React.useState(0);
     const [speed, setSpeed] = React.useState(0);
-    const [textLength, setTextLength] = React.useState(0);
+    const [accuracy, setAccuracy] = React.useState(0);
     const [isStart, setIsStart] = React.useState(true);
-    const [accuracy, setAccuracy] = React.useState(100);
     const [isFinish, setIsFinish] = React.useState(false);
+    const [textLength, setTextLength] = React.useState(0);
+    const [finishTime, setFinishTime] = React.useState(0);
     const [printedText, setPrintedText] = React.useState("");
     const [textToPrint, setTextToPrint] = React.useState("");
     const [isUncorrect, setIsUncorrect] = React.useState(false);
+    const [isTimerActive, setIsTimerActive] = React.useState(false);
     const [currentSymbol, setCurrentSymbol] = React.useState("");
     const [numberOfSymbols, setNumberOfSymbols] = React.useState(0);
     const [numberOfUncorrectSymbols, setNumberOfUncorrectSymbols] = React.useState(0);
 
     const getText = () => {
-        setTextToPrint("fff.");
-        // textApi.getText()
-        //     .then((res) => {
-        //         setTextToPrint(res.toString().replace(/\s+/g, " "));
-        //     })
-        //     .catch((err) => {
-        //         console.log(`Error: ${err}`);
-        //     });
+        // setTextToPrint("fff");
+        // setTextLength("fff".length - 1);
+        textApi.getText()
+            .then((res) => {
+                const resString = res.toString().replace(/\s+/g, " ");
+                setTextToPrint(resString);
+                setTextLength(resString.length - 1)
+            })
+            .catch((err) => {
+                console.log(`Error: ${err}`);
+            });
     };
 
-    const changeTime = React.useCallback(() => {
-        setTime(time + 1);
-    }, [time]);
-
-    const onClickHandler = () => {
-        getText();
+    const changeStatesToStartValues = () => {
         setTime(0);
         setPrintedText("");
         setSpeed(0);
         setTextLength(0);
         setNumberOfSymbols(0);
         setNumberOfUncorrectSymbols(0);
-        setAccuracy(100);
+        setAccuracy(0);
         setIsStart(true);
+        setIsFinish(false);
         setIsUncorrect(false);
+        setIsTimerActive(false);
+    }
+
+    const onClickHandler = () => {
+        changeStatesToStartValues();
+        getText();
     };
 
     const onPressKeyHandler = React.useCallback((ev) => {
+        console.log(numberOfSymbols, textLength)
         if (!SERVICE_KEY_CODES.includes(ev.keyCode)) {
             const currentKey = ev.key;
             if (currentKey === currentSymbol && !isStart) {
@@ -58,28 +66,34 @@ function App() {
                 setTextToPrint(textToPrint?.substring(1));
                 setNumberOfSymbols(numberOfSymbols + 1);
                 setIsUncorrect(false);
+                if (numberOfSymbols !== 0 && numberOfSymbols === textLength) {
+                    setFinishTime(time);
+                    setIsTimerActive(false);
+                    setIsFinish(true);
+                }
             } else {
                 setNumberOfUncorrectSymbols(numberOfUncorrectSymbols + 1);
                 setIsUncorrect(true);
             }
         }
-    }, [currentSymbol, textToPrint, printedText, numberOfUncorrectSymbols, numberOfSymbols, isStart]);
+    }, [time, currentSymbol, textToPrint, printedText, numberOfUncorrectSymbols, numberOfSymbols, isStart, textLength]);
 
     React.useEffect(() => {
-        document.addEventListener("keydown", onPressKeyHandler);
-        return () => {
+        let interval = null;
+        if (isTimerActive) {
+            document.addEventListener("keydown", onPressKeyHandler);
+            interval = setInterval(() => {
+                setTime(time => time + 1);
+            }, 1000);
+        } else if (isTimerActive && time !== 0) {
+            clearInterval(interval);
             document.removeEventListener("keydown", onPressKeyHandler);
         }
-    }, [onPressKeyHandler]);
-
-    React.useEffect(() => {
-        if (!isStart) {
-            let timer = setTimeout(() => { changeTime() }, 1000);
-            return () => {
-                clearTimeout(timer);
-            };
+        return () => {
+            clearInterval(interval);
+            document.removeEventListener("keydown", onPressKeyHandler);
         }
-    }, [changeTime, isStart]);
+    }, [isTimerActive, time, onPressKeyHandler]);
 
     React.useEffect(() => {
         getText();
@@ -89,17 +103,11 @@ function App() {
         if (!isStart) {
             setSpeed(numberOfSymbols / time * 60);
         }
-        if (numberOfSymbols !== 0 && numberOfSymbols === textLength) {
-            setIsFinish(true);
-            setIsStart(false);
-        }
-
-    }, [numberOfSymbols, time, isStart, textLength]);
+    }, [numberOfSymbols, isStart, time]);
 
     React.useEffect(() => {
         if (textToPrint !== undefined) {
             setCurrentSymbol(textToPrint.charAt(0));
-            setTextLength(textToPrint.length);
         }
     }, [textToPrint]);
 
@@ -109,10 +117,12 @@ function App() {
 
     const closeStartPopup = () => {
         setIsStart(false);
+        setIsTimerActive(true);
     }
 
     const closeFinishPopup = () => {
-        setIsFinish(true);
+        changeStatesToStartValues();
+        getText();
     }
 
     return (
@@ -124,7 +134,7 @@ function App() {
             />
             <Popup
                 isOpen={isFinish}
-                message={`You entered ${numberOfSymbols} symbols to ${time} sec. Your speed is ${speed} sym/min. Your accuracy is ${accuracy}%.`}
+                message={`You entered ${numberOfSymbols} symbols to ${finishTime} sec. Your speed is ${speed} sym/min. Your accuracy is ${accuracy}%.`}
                 onClose={closeFinishPopup}
             />
             <header className="App-header">
