@@ -11,7 +11,7 @@ class TextApi {
 }
 
 const textApi = new TextApi({
-    baseUrl: "https://baconipsum.com/api/?type=meat-and-filler&paras=3",
+    baseUrl: "https://baconipsum.com/api/?type=meat-and-filler&paras=1",
 });
 
 export default textApi;
